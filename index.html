@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Trucker Pay Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+```
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+        background: #f5f5f5;
+        padding: 10px;
+        padding-bottom: 150px;
+    }
+    
+    .container {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    /* Week Totals */
+    .week-totals {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    .week-totals h2 {
+        font-size: 16px;
+        margin-bottom: 12px;
+        opacity: 0.9;
+    }
+    
+    .total-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        font-size: 18px;
+        font-weight: 600;
+    }
+    
+    .total-row.current {
+        font-size: 24px;
+        border-top: 1px solid rgba(255,255,255,0.3);
+        padding-top: 12px;
+        margin-top: 8px;
+    }
+    
+    .daily-running {
+        background: rgba(255,255,255,0.2);
+        padding: 10px;
+        border-radius: 8px;
+        margin-top: 12px;
+        font-size: 16px;
+    }
+    
+    .route-count {
+        font-size: 14px;
+        opacity: 0.9;
+        margin-top: 5px;
+    }
+    
+    /* Entry Form */
+    .entry-form {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+    
+    .form-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #667eea;
+    }
+    
+    .form-header h2 {
+        font-size: 20px;
+        color: #667eea;
+    }
+    
+    .route-number {
+        background: #667eea;
+        color: white;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+    
+    .form-section {
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #e0e0e0;
+    }
+    
+    .form-section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+    
+    .form-section h3 {
+        font-size: 16px;
+        color: #333;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .form-group {
+        margin-bottom: 15px;
+    }
+    
+    .form-group label {
+        display: block;
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 5px;
+    }
+    
+    .form-group input[type="date"],
+    .form-group input[type="text"],
+    .form-group input[type="number"] {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 16px;
+        -webkit-appearance: none;
+    }
+    
+    .form-group input:focus {
+        outline: none;
+        border-color: #667eea;
+    }
+    
+    .time-inputs {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        gap: 10px;
+        align-items: center;
+    }
+    
+    .time-inputs span {
+        color: #666;
+        font-size: 14px;
+        text-align: center;
+    }
+    
+    .calculated-display {
+        background: #f0f7ff;
+        padding: 12px;
+        border-radius: 8px;
+        margin-top: 10px;
+        border-left: 4px solid #667eea;
+    }
+    
+    .calculated-display .time-breakdown {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 5px;
+    }
+    
+    .calculated-display .pay-amount {
+        color: #667eea;
+        font-weight: 700;
+        font-size: 18px;
+    }
+    
+    .bonus-badge {
+        display: inline-block;
+        background: #4CAF50;
+        color: white;
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-size: 13px;
+        margin-left: 8px;
+        font-weight: 600;
+    }
+    
+    /* Checkbox */
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 10px;
+    }
+    
+    .checkbox-group input[type="checkbox"] {
+        width: 22px;
+        height: 22px;
+        cursor: pointer;
+    }
+    
+    .checkbox-group label {
+        cursor: pointer;
+        margin: 0;
+        font-size: 15px;
+        color: #333;
+    }
+    
+    /* Buttons */
+    .add-button {
+        background: #f0f0f0;
+        border: 1px dashed #999;
+        color: #666;
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 15px;
+        cursor: pointer;
+        width: 100%;
+        margin-top: 10px;
+        font-weight: 500;
+    }
+    
+    .add-button:active {
+        background: #e0e0e0;
+    }
+    
+    .remove-button {
+        background: #ff4444;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 13px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+    
+    .save-route-button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 16px;
+        border-radius: 12px;
+        font-size: 18px;
+        font-weight: 600;
+        cursor: pointer;
+        width: calc(100% - 40px);
+        max-width: 580px;
+        position: fixed;
+        bottom: 70px;
+        left: 50%;
+        transform: translateX(-50%);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        z-index: 999;
+    }
+    
+    .save-route-button:active {
+        transform: translateX(-50%) scale(0.98);
+    }
+    
+    .action-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        position: fixed;
+        bottom: 70px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: calc(100% - 40px);
+        max-width: 580px;
+        z-index: 999;
+    }
+    
+    .new-route-button {
+        background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+        color: white;
+        border: none;
+        padding: 16px;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+    }
+    
+    .end-day-button {
+        background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+        color: white;
+        border: none;
+        padding: 16px;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+    }
+    
+    .new-route-button:active,
+    .end-day-button:active {
+        transform: scale(0.98);
+    }
+    
+    .hidden {
+        display: none;
+    }
+    
+    /* Line item container */
+    .line-item {
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 12px;
+        position: relative;
+    }
+    
+    .line-item:last-child {
+        margin-bottom: 0;
+    }
+    
+    /* Backhaul list item */
+    .backhaul-item {
+        background: white;
+        border: 1px solid #ddd;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+    }
+    
+    .backhaul-item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+    
+    .backhaul-item-title {
+        font-weight: 600;
+        font-size: 15px;
+        color: #333;
+    }
+    
+    .backhaul-item-pay {
+        color: #667eea;
+        font-weight: 600;
+        font-size: 15px;
+    }
+    
+    .backhaul-item-notes {
+        font-size: 13px;
+        color: #666;
+        line-height: 1.4;
+    }
+    
+    /* Backhaul select item - clickable row */
+    .backhaul-select-row {
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        border: 2px solid transparent;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .backhaul-select-main {
+        flex: 1;
+        cursor: pointer;
+    }
+    
+    .backhaul-select-main:active {
+        opacity: 0.7;
+    }
+    
+    .backhaul-store-number {
+        font-size: 13px;
+        color: #667eea;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+    
+    .backhaul-store-name {
+        font-size: 16px;
+        color: #333;
+        font-weight: 600;
+    }
+    
+    .backhaul-info-button {
+        background: #667eea;
+        color: white;
+        border: none;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        font-size: 18px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    
+    .backhaul-info-button:active {
+        background: #5568d3;
+    }
+    
+    /* Bottom Navigation */
+    .bottom-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        border-top: 1px solid #e0e0e0;
+        display: flex;
+        justify-content: space-around;
+        padding: 10px;
+        box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+        z-index: 1000;
+    }
+    
+    .nav-button {
+        background: none;
+        border: none;
+        padding: 10px;
+        font-size: 11px;
+        color: #666;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+    }
+    
+    .nav-button.active {
+        color: #667eea;
+    }
+    
+    .nav-icon {
+        font-size: 24px;
+    }
+    
+    /* Modal for backhaul selection */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 2000;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+    
+    .modal.active {
+        display: flex;
+    }
+    
+    .modal-content {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        max-width: 500px;
+        width: 100%;
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+    
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    
+    .modal-header h3 {
+        font-size: 18px;
+        color: #333;
+    }
+    
+    .close-modal {
+        background: #f0f0f0;
+        border: none;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        font-size: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .backhaul-select-item {
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        border: 2px solid transparent;
+    }
+    
+    .backhaul-select-item:hover {
+        background: #f0f7ff;
+        border-color: #667eea;
+    }
+    
+    .success-message {
+        background: #4CAF50;
+        color: white;
+        padding: 15px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        text-align: center;
+        font-weight: 600;
+    }
+</style>
+```
+
+</head>
+<body>
+    <div class="container">
+        <!-- Week Totals -->
+        <div class="week-totals">
+            <h2>Pay Summary</h2>
+            <div class="total-row">
+                <span>Last Week:</span>
+                <span id="lastWeekTotal">$0.00</span>
+            </div>
+            <div class="total-row current">
+                <span>This Week:</span>
+                <span id="thisWeekTotal">$0.00</span>
+            </div>
+            <div class="daily-running">
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Today:</span>
+                    <span id="dailyTotal">$0.00</span>
+                </div>
+                <div class="route-count" id="routeCount">No routes today</div>
+            </div>
+        </div>
+
+```
+    <!-- Success Message -->
+    <div id="successMessage" class="success-message hidden">
+        Route saved successfully!
+    </div>
+    
+    <!-- Entry Form -->
+    <div class="entry-form" id="entryForm">
+        <div class="form-header">
+            <h2>New Route</h2>
+            <div class="route-number" id="routeNumber">Route #1</div>
+        </div>
+        
+        <div class="form-group">
+            <label>Shift Date</label>
+            <input type="date" id="shiftDate" />
+        </div>
+        
+        <!-- Miles -->
+        <div class="form-section">
+            <h3>🚛 Miles</h3>
+            <div class="form-group">
+                <label>Total Miles Driven</label>
+                <input type="number" id="miles" placeholder="0" min="0" />
+                <div class="calculated-display">
+                    <div class="pay-amount" id="milesCalc">$0.00</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Stops -->
+        <div class="form-section">
+            <h3>📍 Stops</h3>
+            <div class="form-group">
+                <label>Number of Stops</label>
+                <input type="number" id="stops" placeholder="0" min="0" />
+                <div class="calculated-display">
+                    <div class="pay-amount" id="stopsCalc">$0.00</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Backhauls/Pickups -->
+        <div class="form-section">
+            <h3>🔄 Backhauls/Pickups</h3>
+            <div id="backhaulsContainer"></div>
+            <button class="add-button" onclick="openBackhaulModal()">+ Add Backhaul/Pickup</button>
+        </div>
+        
+        <!-- Detention/Breakdown -->
+        <div class="form-section">
+            <h3>⏰ Detention/Breakdown</h3>
+            <div id="detentionContainer"></div>
+            <button class="add-button" onclick="addDetention()">+ Add Detention/Breakdown</button>
+        </div>
+        
+        <!-- Yard Driver -->
+        <div class="form-section">
+            <h3>🏭 Yard Driver</h3>
+            <div id="yardContainer"></div>
+            <button class="add-button" onclick="addYard()">+ Add Yard Time</button>
+        </div>
+        
+        <!-- Per Diem -->
+        <div class="form-section">
+            <h3>🍽️ Per Diem</h3>
+            <div class="checkbox-group">
+                <input type="checkbox" id="perDiem" onchange="updateRouteTotal()" />
+                <label for="perDiem">Per Diem ($50.00)</label>
+            </div>
+        </div>
+        
+        <!-- Other -->
+        <div class="form-section">
+            <h3>📝 Other</h3>
+            <div id="otherContainer"></div>
+            <button class="add-button" onclick="addOther()">+ Add Other</button>
+        </div>
+        
+        <div class="calculated-display" style="margin-top: 20px;">
+            <div class="time-breakdown">Route Total</div>
+            <div class="pay-amount" id="routeTotal">$0.00</div>
+        </div>
+        
+        <button class="save-route-button" onclick="saveRoute()">Save Route</button>
+    </div>
+    
+    <!-- Action Buttons (shown after first route saved) -->
+    <div id="actionButtons" class="action-buttons hidden">
+        <button class="new-route-button" onclick="startNewRoute()">Start New Route</button>
+        <button class="end-day-button" onclick="endDay()">End Day</button>
+    </div>
+</div>
+
+<!-- Backhaul Selection Modal -->
+<div class="modal" id="backhaulModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Select Backhaul</h3>
+            <button class="close-modal" onclick="closeBackhaulModal()">×</button>
+        </div>
+        <div id="backhaulList"></div>
+        <button class="add-button" style="margin-top: 15px;" onclick="openAddStoreForm()">+ Add New Store</button>
+    </div>
+</div>
+
+<!-- Add Store Form Modal -->
+<div class="modal" id="addStoreModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Add New Store</h3>
+            <button class="close-modal" onclick="closeAddStoreForm()">×</button>
+        </div>
+        <div class="form-group">
+            <label>Store Number</label>
+            <input type="text" id="newStoreNumber" placeholder="e.g., A123, DC45" />
+        </div>
+        <div class="form-group">
+            <label>Store Name</label>
+            <input type="text" id="newStoreName" placeholder="e.g., Walmart DC, Target Store" />
+        </div>
+        <div class="form-group">
+            <label>Notes</label>
+            <textarea id="newStoreNotes" placeholder="Road temps, tire pressure, dock info, etc." rows="5" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; font-family: inherit; resize: vertical;"></textarea>
+        </div>
+        <button class="save-route-button" onclick="saveNewStore()">Save Store</button>
+    </div>
+</div>
+
+<!-- View/Edit Notes Modal -->
+<div class="modal" id="notesModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="notesModalTitle">Store Notes</h3>
+            <button class="close-modal" onclick="closeNotesModal()">×</button>
+        </div>
+        <div style="background: #f0f7ff; padding: 12px; border-radius: 8px; margin-bottom: 15px;">
+            <div style="font-size: 14px; color: #666;">Store Number</div>
+            <div style="font-weight: 600; font-size: 16px; color: #333;" id="notesStoreNumber"></div>
+        </div>
+        <div class="form-group">
+            <label>Notes</label>
+            <textarea id="editStoreNotes" rows="8" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; font-family: inherit; resize: vertical;"></textarea>
+        </div>
+        <button class="save-route-button" onclick="saveEditedNotes()">Save Notes</button>
+    </div>
+</div>
+
+<!-- Bottom Navigation -->
+<div class="bottom-nav">
+    <button class="nav-button active">
+        <div class="nav-icon">📊</div>
+        <div>Dashboard</div>
+    </button>
+    <button class="nav-button">
+        <div class="nav-icon">📅</div>
+        <div>History</div>
+    </button>
+    <button class="nav-button">
+        <div class="nav-icon">🚚</div>
+        <div>Trucks</div>
+    </button>
+    <button class="nav-button">
+        <div class="nav-icon">⚙️</div>
+        <div>Settings</div>
+    </button>
+</div>
+
+<script>
+    // Pay rates
+    const rates = {
+        miles: [
+            { max: 50, rate: 1.415 },
+            { max: 100, rate: 1.080 },
+            { max: 200, rate: 0.87 },
+            { max: 300, rate: 0.72 },
+            { max: 400, rate: 0.69 },
+            { max: Infinity, rate: 0.67 }
+        ],
+        stop: 25.50,
+        backhaul: 29.50,
+        detention: 26.50,
+        yard: 26.50,
+        perDiem: 50.00,
+        yardBonus: 75.00
+    };
+    
+    // Sample backhauls (will be saved to localStorage later)
+    let savedBackhauls = [
+        { id: 1, storeNumber: 'A123', storeName: 'Walmart DC Portland', pay: 29.50, notes: 'Regular pickup route. Dock on east side.' },
+        { id: 2, storeNumber: 'B045', storeName: 'Target Distribution', pay: 29.50, notes: 'Tire pressure: 110 PSI. Road temp < 40°F. Use dock 3-5.' },
+        { id: 3, storeNumber: 'DC12', storeName: 'Amazon Fulfillment', pay: 29.50, notes: 'Check in at gate. Special documentation required for hazmat.' }
+    ];
+    
+    let currentEditingStoreId = null;
+    
+    // Current route data
+    let currentRouteNumber = 1;
+    let todaysRoutes = [];
+    let detentionCounter = 0;
+    let yardCounter = 0;
+    let otherCounter = 0;
+    
+    // Auto-save current state
+    function saveCurrentState() {
+        const state = {
+            date: document.getElementById('shiftDate').value,
+            routeNumber: currentRouteNumber,
+            todaysRoutes: todaysRoutes,
+            formHidden: document.getElementById('entryForm').classList.contains('hidden'),
+            actionButtonsVisible: !document.getElementById('actionButtons').classList.contains('hidden')
+        };
+        localStorage.setItem('currentDayState', JSON.stringify(state));
+    }
+    
+    // Restore state on page load
+    function restoreCurrentState() {
+        const savedState = localStorage.getItem('currentDayState');
+        if (!savedState) return;
+        
+        const state = JSON.parse(savedState);
+        
+        // Restore the saved date (don't auto-advance)
+        document.getElementById('shiftDate').value = state.date;
+        
+        // Restore route number and routes
+        currentRouteNumber = state.routeNumber || 1;
+        todaysRoutes = state.todaysRoutes || [];
+        document.getElementById('routeNumber').textContent = `Route #${currentRouteNumber}`;
+        
+        // Restore form visibility
+        if (state.formHidden) {
+            document.getElementById('entryForm').classList.add('hidden');
+        }
+        
+        // Restore action buttons
+        if (state.actionButtonsVisible) {
+            document.getElementById('actionButtons').classList.remove('hidden');
+        }
+        
+        // Update daily total
+        updateDailyTotal();
+    }
+    
+    // Set today's date
+    document.getElementById('shiftDate').valueAsDate = new Date();
+    
+    // Restore previous state if exists
+    restoreCurrentState();
+    
+    // Calculate mileage pay
+    function calculateMileagePay(miles) {
+        if (!miles || miles <= 0) return 0;
+        
+        for (let bracket of rates.miles) {
+            if (miles <= bracket.max) {
+                return miles * bracket.rate;
+            }
+        }
+        return miles * rates.miles[rates.miles.length - 1].rate;
+    }
+    
+    // Calculate time difference in minutes
+    function calculateTimeDifference(start, end) {
+        if (!start || !end) return 0;
+        
+        // Clean up input - remove spaces and handle various formats
+        start = start.trim().replace(/[^\d:]/g, '');
+        end = end.trim().replace(/[^\d:]/g, '');
+        
+        // Try to parse the time
+        let startParts = start.includes(':') ? start.split(':') : [start.slice(0, 2), start.slice(2)];
+        let endParts = end.includes(':') ? end.split(':') : [end.slice(0, 2), end.slice(2)];
+        
+        const startHour = parseInt(startParts[0]) || 0;
+        const startMin = parseInt(startParts[1]) || 0;
+        const endHour = parseInt(endParts[0]) || 0;
+        const endMin = parseInt(endParts[1]) || 0;
+        
+        // Validate hours and minutes
+        if (startHour > 23 || endHour > 23 || startMin > 59 || endMin > 59) {
+            return 0;
+        }
+        
+        let startMinutes = startHour * 60 + startMin;
+        let endMinutes = endHour * 60 + endMin;
+        
+        // Handle overnight shifts
+        if (endMinutes < startMinutes) {
+            endMinutes += 24 * 60;
+        }
+        
+        return endMinutes - startMinutes;
+    }
+    
+    // Format time display
+    function formatTimeDisplay(minutes) {
+        const hours = Math.floor(minutes / 60);
+        const mins = minutes % 60;
+        return `${hours}:${mins.toString().padStart(2, '0')} (${minutes} min)`;
+    }
+    
+    // Update mileage calculation
+    document.getElementById('miles').addEventListener('input', function() {
+        const miles = parseFloat(this.value) || 0;
+        const pay = calculateMileagePay(miles);
+        document.getElementById('milesCalc').textContent = `$${pay.toFixed(2)}`;
+        updateRouteTotal();
+    });
+    
+    // Update stops calculation
+    document.getElementById('stops').addEventListener('input', function() {
+        const stops = parseFloat(this.value) || 0;
+        const pay = stops * rates.stop;
+        document.getElementById('stopsCalc').textContent = `$${pay.toFixed(2)}`;
+        updateRouteTotal();
+    });
+    
+    // Open backhaul modal
+    function openBackhaulModal() {
+        const modal = document.getElementById('backhaulModal');
+        const list = document.getElementById('backhaulList');
+        
+        // Sort by store number alphabetically
+        const sorted = [...savedBackhauls].sort((a, b) => a.storeNumber.localeCompare(b.storeNumber));
+        
+        list.innerHTML = sorted.map(b => `
+            <div class="backhaul-select-row">
+                <div class="backhaul-select-main" onclick="selectBackhaul(${b.id})">
+                    <div class="backhaul-store-number">#${b.storeNumber}</div>
+                    <div class="backhaul-store-name">${b.storeName}</div>
+                </div>
+                <button class="backhaul-info-button" onclick="event.stopPropagation(); viewStoreNotes(${b.id})">ⓘ</button>
+            </div>
+        `).join('');
+        
+        modal.classList.add('active');
+    }
+    
+    function closeBackhaulModal() {
+        document.getElementById('backhaulModal').classList.remove('active');
+    }
+    
+    function selectBackhaul(id) {
+        const backhaul = savedBackhauls.find(b => b.id === id);
+        const container = document.getElementById('backhaulsContainer');
+        
+        const div = document.createElement('div');
+        div.className = 'backhaul-item';
+        div.innerHTML = `
+            <div class="backhaul-item-header">
+                <div class="backhaul-item-title">#${backhaul.storeNumber} - ${backhaul.storeName}</div>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <button class="backhaul-info-button" style="width: 32px; height: 32px; font-size: 16px;" onclick="event.stopPropagation(); viewStoreNotes(${backhaul.id})">ⓘ</button>
+                    <div class="backhaul-item-pay">$${backhaul.pay.toFixed(2)}</div>
+                </div>
+            </div>
+            <button class="remove-button" onclick="this.parentElement.remove(); updateRouteTotal()">Remove</button>
+        `;
+        
+        container.appendChild(div);
+        closeBackhaulModal();
+        updateRouteTotal();
+    }
+    
+    // Open add store form
+    function openAddStoreForm() {
+        closeBackhaulModal();
+        document.getElementById('newStoreNumber').value = '';
+        document.getElementById('newStoreName').value = '';
+        document.getElementById('newStoreNotes').value = '';
+        document.getElementById('addStoreModal').classList.add('active');
+    }
+    
+    function closeAddStoreForm() {
+        document.getElementById('addStoreModal').classList.remove('active');
+    }
+    
+    function saveNewStore() {
+        const storeNumber = document.getElementById('newStoreNumber').value.trim();
+        const storeName = document.getElementById('newStoreName').value.trim();
+        const notes = document.getElementById('newStoreNotes').value.trim();
+        
+        if (!storeNumber || !storeName) {
+            alert('Please enter both store number and store name');
+            return;
+        }
+        
+        const newBackhaul = {
+            id: savedBackhauls.length + 1,
+            storeNumber: storeNumber,
+            storeName: storeName,
+            pay: rates.backhaul,
+            notes: notes || ''
+        };
+        
+        savedBackhauls.push(newBackhaul);
+        closeAddStoreForm();
+        
+        // Show success and reopen backhaul list
+        alert('Store saved!');
+        openBackhaulModal();
+    }
+    
+    // View/edit store notes
+    function viewStoreNotes(id) {
+        const backhaul = savedBackhauls.find(b => b.id === id);
+        currentEditingStoreId = id;
+        
+        document.getElementById('notesModalTitle').textContent = backhaul.storeName;
+        document.getElementById('notesStoreNumber').textContent = `#${backhaul.storeNumber}`;
+        document.getElementById('editStoreNotes').value = backhaul.notes || '';
+        
+        closeBackhaulModal();
+        document.getElementById('notesModal').classList.add('active');
+    }
+    
+    function closeNotesModal() {
+        document.getElementById('notesModal').classList.remove('active');
+        currentEditingStoreId = null;
+    }
+    
+    function saveEditedNotes() {
+        if (currentEditingStoreId) {
+            const backhaul = savedBackhauls.find(b => b.id === currentEditingStoreId);
+            if (backhaul) {
+                backhaul.notes = document.getElementById('editStoreNotes').value.trim();
+                alert('Notes saved!');
+                closeNotesModal();
+            }
+        }
+    }
+    
+    // Add detention
+    function addDetention() {
+        const id = detentionCounter++;
+        const container = document.getElementById('detentionContainer');
+        const div = document.createElement('div');
+        div.className = 'line-item';
+        div.id = `detention-${id}`;
+        div.innerHTML = `
+            <div class="time-inputs">
+                <div>
+                    <label style="font-size: 13px; color: #666; margin-bottom: 5px; display: block;">Start (24hr)</label>
+                    <input type="text" class="detention-start" placeholder="23:30" maxlength="5" oninput="updateDetention(${id})" onchange="updateDetention(${id})" />
+                </div>
+                <span>→</span>
+                <div>
+                    <label style="font-size: 13px; color: #666; margin-bottom: 5px; display: block;">End (24hr)</label>
+                    <input type="text" class="detention-end" placeholder="02:00" maxlength="5" oninput="updateDetention(${id})" onchange="updateDetention(${id})" />
+                </div>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="detention-deduct-${id}" class="detention-deduct" onchange="updateDetention(${id})" />
+                <label for="detention-deduct-${id}">Deduct 60 min</label>
+            </div>
+            <div class="calculated-display" id="detention-display-${id}">
+                <div class="time-breakdown" id="detention-time-${id}">Enter times above</div>
+                <div class="pay-amount" id="detention-calc-${id}">$0.00</div>
+            </div>
+            <button class="remove-button" onclick="removeItem('detention-${id}')">Remove</button>
+        `;
+        container.appendChild(div);
+    }
+    
+    // Update detention calculation
+    function updateDetention(id) {
+        const item = document.getElementById(`detention-${id}`);
+        if (!item) return;
+        
+        const start = item.querySelector('.detention-start').value;
+        const end = item.querySelector('.detention-end').value;
+        const deduct = item.querySelector('.detention-deduct').checked;
+        
+        const minutes = calculateTimeDifference(start, end);
+        
+        if (minutes > 0) {
+            const adjustedMinutes = deduct ? Math.max(0, minutes - 60) : minutes;
+            const hours = adjustedMinutes / 60;
+            const pay = hours * rates.detention;
+            
+            document.getElementById(`detention-time-${id}`).textContent = formatTimeDisplay(minutes);
+            document.getElementById(`detention-calc-${id}`).textContent = `$${pay.toFixed(2)}`;
+        } else {
+            document.getElementById(`detention-time-${id}`).textContent = 'Enter times above';
+            document.getElementById(`detention-calc-${id}`).textContent = '$0.00';
+        }
+        
+        updateRouteTotal();
+    }
+    
+    // Add yard time
+    function addYard() {
+        const id = yardCounter++;
+        const container = document.getElementById('yardContainer');
+        const div = document.createElement('div');
+        div.className = 'line-item';
+        div.id = `yard-${id}`;
+        div.innerHTML = `
+            <div class="time-inputs">
+                <div>
+                    <label style="font-size: 13px; color: #666; margin-bottom: 5px; display: block;">Start (24hr)</label>
+                    <input type="text" class="yard-start" placeholder="06:00" maxlength="5" oninput="updateYard(${id})" onchange="updateYard(${id})" />
+                </div>
+                <span>→</span>
+                <div>
+                    <label style="font-size: 13px; color: #666; margin-bottom: 5px; display: block;">End (24hr)</label>
+                    <input type="text" class="yard-end" placeholder="14:30" maxlength="5" oninput="updateYard(${id})" onchange="updateYard(${id})" />
+                </div>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="yard-deduct-${id}" class="yard-deduct" onchange="updateYard(${id})" />
+                <label for="yard-deduct-${id}">Deduct 0.5 hour for lunch</label>
+            </div>
+            <div class="calculated-display" id="yard-display-${id}">
+                <div class="time-breakdown" id="yard-time-${id}">Enter times above</div>
+                <div class="pay-amount" id="yard-calc-${id}">$0.00</div>
+            </div>
+            <button class="remove-button" onclick="removeItem('yard-${id}')">Remove</button>
+        `;
+        container.appendChild(div);
+    }
+    
+    // Update yard calculation
+    function updateYard(id) {
+        const item = document.getElementById(`yard-${id}`);
+        if (!item) return;
+        
+        const start = item.querySelector('.yard-start').value;
+        const end = item.querySelector('.yard-end').value;
+        const deduct = item.querySelector('.yard-deduct').checked;
+        
+        const minutes = calculateTimeDifference(start, end);
+        
+        if (minutes > 0) {
+            const hours = minutes / 60;
+            const adjustedHours = deduct ? Math.max(0, hours - 0.5) : hours;
+            let pay = adjustedHours * rates.yard;
+            
+            let bonusText = '';
+            if (hours >= 9) {
+                pay += rates.yardBonus;
+                bonusText = '<span class="bonus-badge">+$75 Bonus!</span>';
+            }
+            
+            const hoursDisplay = `${Math.floor(hours)}:${Math.round((hours % 1) * 60).toString().padStart(2, '0')}`;
+            const adjustedDisplay = `${Math.floor(adjustedHours)}:${Math.round((adjustedHours % 1) * 60).toString().padStart(2, '0')}`;
+            
+            // Show both actual time and paid time if deduction is checked
+            if (deduct && hours !== adjustedHours) {
+                document.getElementById(`yard-time-${id}`).textContent = 
+                    `${hoursDisplay} worked (${adjustedDisplay} paid = ${adjustedHours.toFixed(2)} hrs)`;
+            } else {
+                document.getElementById(`yard-time-${id}`).textContent = 
+                    `${hoursDisplay} (${hours.toFixed(2)} hrs)`;
+            }
+            
+            document.getElementById(`yard-calc-${id}`).innerHTML = `$${pay.toFixed(2)} ${bonusText}`;
+        } else {
+            document.getElementById(`yard-time-${id}`).textContent = 'Enter times above';
+            document.getElementById(`yard-calc-${id}`).innerHTML = '$0.00';
+        }
+        
+        updateRouteTotal();
+    }
+    
+    // Add other
+    function addOther() {
+        const id = otherCounter++;
+        const container = document.getElementById('otherContainer');
+        const div = document.createElement('div');
+        div.className = 'line-item';
+        div.id = `other-${id}`;
+        div.innerHTML = `
+            <div class="form-group">
+                <label>Description</label>
+                <input type="text" class="other-desc" placeholder="e.g., Vacation Pay, Bonus" />
+            </div>
+            <div class="form-group">
+                <label>Amount</label>
+                <input type="number" class="other-amount" placeholder="0.00" min="0" step="0.01" onchange="updateRouteTotal()" />
+            </div>
+            <button class="remove-button" onclick="removeItem('other-${id}')">Remove</button>
+        `;
+        container.appendChild(div);
+    }
+    
+    // Remove item
+    function removeItem(id) {
+        const element = document.getElementById(id);
+        if (element) {
+            element.remove();
+            updateRouteTotal();
+        }
+    }
+    
+    // Update route total
+    function updateRouteTotal() {
+        let total = 0;
+        
+        // Miles
+        const miles = parseFloat(document.getElementById('miles').value) || 0;
+        total += calculateMileagePay(miles);
+        
+        // Stops
+        const stops = parseFloat(document.getElementById('stops').value) || 0;
+        total += stops * rates.stop;
+        
+        // Backhauls
+        const backhaulItems = document.querySelectorAll('#backhaulsContainer .backhaul-item');
+        total += backhaulItems.length * rates.backhaul;
+        
+        // Detention
+        for (let i = 0; i < detentionCounter; i++) {
+            const calcEl = document.getElementById(`detention-calc-${i}`);
+            if (calcEl && calcEl.textContent) {
+                const pay = parseFloat(calcEl.textContent.replace(/[^0-9.]/g, '')) || 0;
+                total += pay;
+            }
+        }
+        
+        // Yard
+        for (let i = 0; i < yardCounter; i++) {
+            const calcEl = document.getElementById(`yard-calc-${i}`);
+            if (calcEl && calcEl.textContent) {
+                const pay = parseFloat(calcEl.textContent.replace(/[^0-9.]/g, '')) || 0;
+                total += pay;
+            }
+        }
+        
+        // Per Diem
+        if (document.getElementById('perDiem').checked) {
+            total += rates.perDiem;
+        }
+        
+        // Other
+        document.querySelectorAll('.other-amount').forEach(input => {
+            const amount = parseFloat(input.value) || 0;
+            total += amount;
+        });
+        
+        document.getElementById('routeTotal').textContent = `$${total.toFixed(2)}`;
+    }
+    
+    // Save route
+    function saveRoute() {
+        const routeData = {
+            routeNumber: currentRouteNumber,
+            date: document.getElementById('shiftDate').value,
+            miles: parseFloat(document.getElementById('miles').value) || 0,
+            // ... (collect all data)
+        };
+        
+        todaysRoutes.push(routeData);
+        
+        // Show success message
+        const successMsg = document.getElementById('successMessage');
+        successMsg.classList.remove('hidden');
+        setTimeout(() => successMsg.classList.add('hidden'), 3000);
+        
+        // Update daily total
+        updateDailyTotal();
+        
+        // Show action buttons
+        document.getElementById('actionButtons').classList.remove('hidden');
+        
+        // Hide form
+        document.getElementById('entryForm').classList.add('hidden');
+        
+        // Save state
+        saveCurrentState();
+    }
+    
+    // Start new route
+    function startNewRoute() {
+        currentRouteNumber++;
+        document.getElementById('routeNumber').textContent = `Route #${currentRouteNumber}`;
+        
+        // Clear form
+        clearForm();
+        
+        // Show form
+        document.getElementById('entryForm').classList.remove('hidden');
+        
+        // Save state
+        saveCurrentState();
+    }
+    
+    // End day
+    function endDay() {
+        if (confirm('End day and finalize all routes?')) {
+            // Clear saved state
+            localStorage.removeItem('currentDayState');
+            
+            // Reset for next day
+            currentRouteNumber = 1;
+            todaysRoutes = [];
+            clearForm();
+            document.getElementById('actionButtons').classList.add('hidden');
+            document.getElementById('entryForm').classList.remove('hidden');
+            document.getElementById('routeNumber').textContent = 'Route #1';
+            
+            // Don't auto-advance date - user will set it manually for next shift
+            
+            alert('Day ended. Set your next shift date when ready.');
+        }
+    }
+    
+    // Clear form
+    function clearForm() {
+        document.getElementById('miles').value = '';
+        document.getElementById('stops').value = '';
+        document.getElementById('perDiem').checked = false;
+        document.getElementById('backhaulsContainer').innerHTML = '';
+        document.getElementById('detentionContainer').innerHTML = '';
+        document.getElementById('yardContainer').innerHTML = '';
+        document.getElementById('otherContainer').innerHTML = '';
+        
+        detentionCounter = 0;
+        yardCounter = 0;
+        otherCounter = 0;
+        
+        updateRouteTotal();
+    }
+    
+    // Update daily total
+    function updateDailyTotal() {
+        // Calculate total from all routes
+        let dayTotal = 0;
+        todaysRoutes.forEach(route => {
+            dayTotal += parseFloat(document.getElementById('routeTotal').textContent.replace(/[^0-9.]/g, '')) || 0;
+        });
+        
+        document.getElementById('dailyTotal').textContent = `$${dayTotal.toFixed(2)}`;
+        document.getElementById('routeCount').textContent = 
+            todaysRoutes.length === 1 ? '1 route saved' : `${todaysRoutes.length} routes saved`;
+    }
+</script>
+```
+
+</body>
+</html>
